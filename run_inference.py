@@ -16,7 +16,10 @@ def main():
         print(f"Error initializing pipeline: {e}")
         return
 
+    print("Next")
+
     try:
+        print('getting results...')
         # Perform inference
         result = classifier(text)
         print(f"Pipeline result: {result}")

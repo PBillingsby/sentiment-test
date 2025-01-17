@@ -1,54 +1,80 @@
 import os
 import json
-from transformers import pipeline
+import sys
+import traceback
+from transformers import AutoTokenizer, AutoModelForSequenceClassification
+import torch
 
-TASK_NAME = "sentiment-analysis"
-MODEL = "distilbert-base-uncased-finetuned-sst-2-english"
+def analyze_sentiment(text, model, tokenizer, max_length=128):
+    """
+    Analyze sentiment of the input text
+    """
+    try:
+        inputs = tokenizer(
+            text,
+            return_tensors="pt",
+            max_length=max_length,
+            truncation=True,
+            padding=True
+        )
+
+        outputs = model(**inputs)
+        probabilities = torch.nn.functional.softmax(outputs.logits, dim=-1)
+        prediction = torch.argmax(probabilities, dim=-1)
+        
+        # Map predictions to labels (assuming binary classification: negative=0, positive=1)
+        labels = ['NEGATIVE', 'POSITIVE']
+        sentiment = labels[prediction.item()]
+        confidence = probabilities[0][prediction.item()].item()
+
+        return sentiment, confidence
+
+    except Exception as e:
+        print(f"Error analyzing sentiment: {e}", file=sys.stderr)
+        traceback.print_exc(file=sys.stderr)
+        raise
 
 def main():
+    print("Starting sentiment analysis", file=sys.stderr, flush=True)
+
     text = os.environ.get('INPUT_TEXT', 'Default text for analysis')
-    print(f"Text to analyze: {text}")
+    model_directory = os.environ.get('MODEL_DIRECTORY', '/model')
+
+    output = {
+        'input_text': text,
+        'status': 'error',
+        'sentiment': None,
+        'confidence': None
+    }
 
     try:
-        classifier = pipeline(TASK_NAME, model=MODEL, device=-1)
-        print("Pipeline initialized successfully.")
+        tokenizer = AutoTokenizer.from_pretrained(model_directory)
+        model = AutoModelForSequenceClassification.from_pretrained(model_directory)
+
+        sentiment, confidence = analyze_sentiment(text, model, tokenizer)
+        output.update({
+            'status': 'success',
+            'sentiment': sentiment,
+            'confidence': confidence
+        })
+
+        print(f"Sentiment: {sentiment}, Confidence: {confidence:.4f}", file=sys.stderr, flush=True)
+
     except Exception as e:
-        print(f"Error initializing pipeline: {e}")
-        return
+        print("Error during processing:", file=sys.stderr, flush=True)
+        traceback.print_exc(file=sys.stderr)
+        output['error'] = str(e)
 
-    print("Next")
+    os.makedirs('/outputs', exist_ok=True)
+    output_path = '/outputs/result.json'
 
     try:
-        print('getting results...')
-        # Perform inference
-        result = classifier(text)
-        print(f"Pipeline result: {result}")
-
-        # Format output
-        output = {
-            'input_text': text,
-            'sentiment': result[0]['label'],
-            'confidence': float(result[0]['score']),
-            'status': 'success'
-        }
-    except Exception as e:
-        print(f"Error during inference: {e}")
-        output = {
-            'input_text': text,
-            'error': str(e),
-            'status': 'error'
-        }
-
-    # Save output to the designated output directory
-    try:
-        os.makedirs('/outputs', exist_ok=True)
-        output_path = '/outputs/result.json'
-        print(f"Saving output to {output_path}")
         with open(output_path, 'w') as f:
             json.dump(output, f, indent=2)
-        print("Output saved successfully.")
-    except Exception as e:
-        print(f"Error saving output: {e}")
+        print(f"Successfully wrote output to {output_path}", file=sys.stderr, flush=True)
+    except Exception as write_error:
+        print("Error writing output file:", file=sys.stderr, flush=True)
+        traceback.print_exc(file=sys.stderr)
 
 if __name__ == "__main__":
     main()

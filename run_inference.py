@@ -2,7 +2,7 @@ import os
 import json
 import sys
 import traceback
-from transformers import AutoTokenizer, AutoModelForSequenceClassification
+from transformers import DistilBertTokenizer, DistilBertForSequenceClassification
 import torch
 
 def analyze_sentiment(text, model, tokenizer, max_length=128):
@@ -48,8 +48,8 @@ def main():
     }
 
     try:
-        tokenizer = AutoTokenizer.from_pretrained(model_directory)
-        model = AutoModelForSequenceClassification.from_pretrained(model_directory)
+        tokenizer = DistilBertTokenizer.from_pretrained(model_directory)
+        model = DistilBertForSequenceClassification.from_pretrained(model_directory)
 
         sentiment, confidence = analyze_sentiment(text, model, tokenizer)
         output.update({

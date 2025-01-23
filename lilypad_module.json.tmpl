@@ -20,7 +20,7 @@
         "EnvironmentVariables": [
           {{ if .input }}"INPUT_TEXT={{ js .input }}"{{ else }}"INPUT_TEXT=Default text for analysis"{{ end }}
         ],
-        "Image": "devlinrocha/lilypad-module-sentiment:latest"
+        "Image": {{ "devlinrocha/lilypad-module-sentiment:latest" }}
       },
       "Engine": "Docker",
       "Network": {

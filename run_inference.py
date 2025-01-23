@@ -36,7 +36,7 @@ def analyze_sentiment(text, model, tokenizer, max_length=128):
 def main():
     print("Starting sentiment analysis", file=sys.stderr, flush=True)
 
-    text = os.environ.get('INPUT_TEXT', 'Default text for analysis')
+    text = os.environ.get('INPUT', 'Default text for analysis')
 
     print(text)
     model_directory = os.environ.get('MODEL_DIRECTORY', '/model')

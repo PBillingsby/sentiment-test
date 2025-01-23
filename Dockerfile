@@ -24,8 +24,5 @@ ENV PYTHONDONTWRITEBYTECODE=1
 ENV HF_HOME=/model
 ENV TRANSFORMERS_OFFLINE=1
 
-RUN mkdir -p /outputs
-RUN chmod 777 /outputs
-
 # Set entrypoint
 ENTRYPOINT ["python", "/workspace/run_inference.py"]

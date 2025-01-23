@@ -18,8 +18,7 @@
         "Entrypoint": ["python", "/workspace/run_inference.py"],
         "WorkingDirectory": "/workspace",
         "EnvironmentVariables": [
-          "INPUT_TEXT={{ if .input }}{{ .input }}{{ else }}Default text for analysis{{ end }}",
-          {{ .ENV }}
+          {{ if .input }}"INPUT_TEXT={{ js .input }}"{{ else }}"INPUT_TEXT=Default text for analysis"{{ end }}
         ],
         "Image": {{ .image }}
       },

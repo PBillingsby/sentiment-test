@@ -19,7 +19,7 @@
         "WorkingDirectory": "/workspace",
         "EnvironmentVariables": [
           {{ .ENV }},
-          "INPUT_TEXT={{ or .input "Default text for analysis" }}"
+          "INPUT_TEXT={{ .input }}"
         ],
         "Image": "devlinrocha/lilypad-module-sentiment:latest"
       },

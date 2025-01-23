@@ -18,9 +18,10 @@
         "Entrypoint": ["python", "/workspace/run_inference.py"],
         "WorkingDirectory": "/workspace",
         "EnvironmentVariables": [
-          {{ if .input }}"INPUT_TEXT={{ js .input }}"{{ else }}"INPUT_TEXT=Default text for analysis"{{ end }}
+          "INPUT_TEXT={{ or .input "Default text for analysis" }}",
+          {{ .ENV }}
         ],
-        "Image": {{"devlinrocha/lilypad-module-sentiment:latest"}}
+        "Image": "devlinrocha/lilypad-module-sentiment:latest"
       },
       "Engine": "Docker",
       "Network": {

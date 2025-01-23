@@ -18,9 +18,10 @@
         "Entrypoint": ["python", "/workspace/run_inference.py"],
         "WorkingDirectory": "/workspace",
         "EnvironmentVariables": [
+          "INPUT_TEXT={{ if .input }}{{ .input }}{{ else }}Default text for analysis{{ end }}",
           {{ .ENV }}
         ],
-        "Image": {{ .Image }}
+        "Image": {{ .image }}
       },
       "Engine": "Docker",
       "Network": {

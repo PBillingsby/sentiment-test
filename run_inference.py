@@ -22,7 +22,6 @@ def analyze_sentiment(text, model, tokenizer, max_length=128):
         probabilities = torch.nn.functional.softmax(outputs.logits, dim=-1)
         prediction = torch.argmax(probabilities, dim=-1)
         
-        # Map predictions to labels (assuming binary classification: negative=0, positive=1)
         labels = ['NEGATIVE', 'POSITIVE']
         sentiment = labels[prediction.item()]
         confidence = probabilities[0][prediction.item()].item()
@@ -37,11 +36,11 @@ def analyze_sentiment(text, model, tokenizer, max_length=128):
 def main():
     print("Starting sentiment analysis", file=sys.stderr, flush=True)
 
-    text = os.environ.get('INPUT_TEXT', 'Default text for analysis')
+    text = os.environ.get('INPUT', 'Default text for analysis')
     model_directory = os.environ.get('MODEL_DIRECTORY', '/model')
 
     output = {
-        'input_text': text,
+        'input': text,
         'status': 'error',
         'sentiment': None,
         'confidence': None

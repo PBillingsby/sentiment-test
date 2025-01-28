@@ -25,4 +25,4 @@ ENV HF_HOME=/model
 ENV TRANSFORMERS_OFFLINE=1
 
 # Set entrypoint
-ENTRYPOINT ["python", "/workspace/run_inference.py"]
+ENTRYPOINT ["python", "/workspace/src/run_inference.py"]

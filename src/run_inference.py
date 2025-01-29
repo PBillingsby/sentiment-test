@@ -40,7 +40,7 @@ def main():
 
     text = os.environ.get("INPUT", "Default text for analysis")
 
-    model_directory = os.environ.get("MODEL_DIRECTORY", "/model")
+    model_directory = os.environ.get("MODEL_DIRECTORY", "/models")
 
     output = {"input": text, "status": "error", "sentiment": None, "confidence": None}
 

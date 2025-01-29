@@ -5,6 +5,7 @@ import traceback
 from transformers import DistilBertTokenizer, DistilBertForSequenceClassification
 import torch
 
+
 def analyze_sentiment(text, model, tokenizer, max_length=128):
     """
     Analyze sentiment of the input text
@@ -15,14 +16,14 @@ def analyze_sentiment(text, model, tokenizer, max_length=128):
             return_tensors="pt",
             max_length=max_length,
             truncation=True,
-            padding=True
+            padding=True,
         )
 
         outputs = model(**inputs)
         probabilities = torch.nn.functional.softmax(outputs.logits, dim=-1)
         prediction = torch.argmax(probabilities, dim=-1)
-        
-        labels = ['NEGATIVE', 'POSITIVE']
+
+        labels = ["NEGATIVE", "POSITIVE"]
         sentiment = labels[prediction.item()]
         confidence = probabilities[0][prediction.item()].item()
 
@@ -33,49 +34,49 @@ def analyze_sentiment(text, model, tokenizer, max_length=128):
         traceback.print_exc(file=sys.stderr)
         raise
 
+
 def main():
     print("Starting sentiment analysis", file=sys.stderr, flush=True)
 
-    text = os.environ.get('INPUT', 'Default text for analysis')
+    text = os.environ.get("INPUT", "Default text for analysis")
 
-    print(text)
-    model_directory = os.environ.get('MODEL_DIRECTORY', '/model')
+    model_directory = os.environ.get("MODEL_DIRECTORY", "/model")
 
-    output = {
-        'input': text,
-        'status': 'error',
-        'sentiment': None,
-        'confidence': None
-    }
+    output = {"input": text, "status": "error", "sentiment": None, "confidence": None}
 
     try:
         tokenizer = DistilBertTokenizer.from_pretrained(model_directory)
         model = DistilBertForSequenceClassification.from_pretrained(model_directory)
 
         sentiment, confidence = analyze_sentiment(text, model, tokenizer)
-        output.update({
-            'status': 'success',
-            'sentiment': sentiment,
-            'confidence': confidence
-        })
+        output.update(
+            {"status": "success", "sentiment": sentiment, "confidence": confidence}
+        )
 
-        print(f"Sentiment: {sentiment}, Confidence: {confidence:.4f}", file=sys.stderr, flush=True)
+        print(
+            f"Sentiment: {sentiment}, Confidence: {confidence:.4f}",
+            file=sys.stderr,
+            flush=True,
+        )
 
     except Exception as e:
         print("Error during processing:", file=sys.stderr, flush=True)
         traceback.print_exc(file=sys.stderr)
-        output['error'] = str(e)
+        output["error"] = str(e)
 
-    os.makedirs('/outputs', exist_ok=True)
-    output_path = '/outputs/result.json'
+    os.makedirs("/outputs", exist_ok=True)
+    output_path = "/outputs/result.json"
 
     try:
-        with open(output_path, 'w') as f:
+        with open(output_path, "w") as f:
             json.dump(output, f, indent=2)
-        print(f"Successfully wrote output to {output_path}", file=sys.stderr, flush=True)
+        print(
+            f"Successfully wrote output to {output_path}", file=sys.stderr, flush=True
+        )
     except Exception as write_error:
         print("Error writing output file:", file=sys.stderr, flush=True)
         traceback.print_exc(file=sys.stderr)
+
 
 if __name__ == "__main__":
     main()

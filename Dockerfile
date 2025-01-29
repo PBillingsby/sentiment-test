@@ -13,8 +13,8 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Add models
-RUN mkdir /models
-ADD https://huggingface.co/distilbert/distilbert-base-uncased-finetuned-sst-2-english /models
+RUN mkdir /models && \
+  git clone https://huggingface.co/distilbert/distilbert-base-uncased-finetuned-sst-2-english /models
 
 # Create output directory
 RUN mkdir -p /outputs

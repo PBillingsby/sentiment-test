@@ -1,4 +1,4 @@
-FROM python:3.9-slim
+FROM python:3.12-slim
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
   build-essential \
@@ -12,11 +12,15 @@ WORKDIR /workspace
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
+# Add models
+RUN mkdir /models
+ADD https://huggingface.co/distilbert/distilbert-base-uncased-finetuned-sst-2-english /models
+
 # Create output directory
 RUN mkdir -p /outputs
 
-COPY src  /src/
-COPY model ./model/
+# Copy source code
+COPY src /src
 
 ENV HF_HOME=/model \
 TRANSFORMERS_OFFLINE=1

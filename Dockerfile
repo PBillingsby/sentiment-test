@@ -2,7 +2,6 @@ FROM python:3.12-slim
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
   build-essential \
-  wget \
   && rm -rf /var/lib/apt/lists/*
 
 # Set working directory
@@ -12,9 +11,9 @@ WORKDIR /workspace
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Add models
-RUN mkdir /models && \
-  git clone https://huggingface.co/distilbert/distilbert-base-uncased-finetuned-sst-2-english /models
+# Copy pre-downloaded models into the container
+RUN mkdir -p /models && \
+COPY models /models
 
 # Create output directory
 RUN mkdir -p /outputs

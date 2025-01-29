@@ -2,7 +2,7 @@ import os
 import json
 import sys
 import traceback
-from transformers import DistilBertTokenizer, DistilBertForSequenceClassification
+from transformers import pipeline
 import torch
 
 
@@ -40,23 +40,28 @@ def main():
 
     text = os.environ.get("INPUT", "Default text for analysis")
 
-    model_directory = os.environ.get("MODEL_DIRECTORY", "/models")
-
-    output = {"input": text, "status": "error", "sentiment": None, "confidence": None}
+    output = {
+        "input": text,
+        "sentiment": None,
+        "confidence": None,
+        "status": "error",
+    }
 
     try:
-        tokenizer = DistilBertTokenizer.from_pretrained(model_directory)
-        model = DistilBertForSequenceClassification.from_pretrained(model_directory)
-
-        sentiment, confidence = analyze_sentiment(text, model, tokenizer)
-        output.update(
-            {"status": "success", "sentiment": sentiment, "confidence": confidence}
+        pipe = pipeline(
+            "text-classification",
+            model="distilbert/distilbert-base-uncased-finetuned-sst-2-english",
         )
 
-        print(
-            f"Sentiment: {sentiment}, Confidence: {confidence:.4f}",
-            file=sys.stderr,
-            flush=True,
+        result = pipe(text)
+
+        output.update(
+            {
+                "input": text,
+                "sentiment": result[0]["label"],
+                "confidence": float(result[0]["score"]),
+                "status": "success",
+            }
         )
 
     except Exception as e:

@@ -11,15 +11,15 @@ WORKDIR /workspace
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy pre-downloaded models into the container
-RUN mkdir -p /models && \
-COPY models /models
 
 # Create output directory
 RUN mkdir -p /outputs
 
 # Copy source code
 COPY src /src
+
+# Copy pre-downloaded models into the container
+COPY models /models
 
 ENV HF_HOME=/model \
 TRANSFORMERS_OFFLINE=1

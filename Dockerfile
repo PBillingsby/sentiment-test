@@ -20,7 +20,7 @@ COPY src /src
 # Copy pre-downloaded models into the container
 COPY models /models
 
-ENV HF_HOME=/model \
+ENV HF_HOME=/models \
 TRANSFORMERS_OFFLINE=1
 
 # Set entrypoint

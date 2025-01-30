@@ -15,8 +15,8 @@
         "Concurrency": 1
       },
       "Docker": {
-        "Entrypoint": ["python", "/src/run_inference.py"],
         "WorkingDirectory": "/workspace",
+        "Entrypoint": ["python", "/src/run_inference.py"],
         "EnvironmentVariables": [
           "INPUT_TEXT={{ js .input }}"
         ],

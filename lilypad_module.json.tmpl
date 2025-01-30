@@ -18,7 +18,7 @@
         "WorkingDirectory": "/workspace",
         "Entrypoint": ["python", "/src/run_inference.py"],
         "EnvironmentVariables": [
-          "INPUT_TEXT={{ js .input }}"
+          "INPUT={{ js .input }}"
         ],
         "Image": "devlinrocha/lilypad-module-sentiment:latest"
       },

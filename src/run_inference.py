@@ -2,7 +2,7 @@ import os
 import json
 import sys
 import traceback
-from transformers import pipeline
+from transformers import DistilBertTokenizer, DistilBertForSequenceClassification
 import torch
 
 
@@ -38,28 +38,22 @@ def analyze_sentiment(text, model, tokenizer, max_length=128):
 def main():
     print("Starting sentiment analysis", file=sys.stderr, flush=True)
 
-    text = os.environ.get("INPUT", "Default text for analysis")
+    text = os.environ.get("INPUT_TEXT", "Default text for analysis")
 
-    output = {
-        "input": text,
-        "sentiment": None,
-        "confidence": None,
-        "status": "error",
-    }
+    model_directory = os.environ.get("MODEL_DIRECTORY", "/models")
+
+    output = {"input": text, "status": "error", "sentiment": None, "confidence": None}
 
     try:
-        pipe = pipeline(
-            "text-classification",
-            model="distilbert/distilbert-base-uncased-finetuned-sst-2-english",
-        )
+        model = DistilBertForSequenceClassification.from_pretrained(model_directory)
+        tokenizer = DistilBertTokenizer.from_pretrained(model_directory)
 
-        result = pipe(text)
-
+        sentiment, confidence = analyze_sentiment(text, model, tokenizer)
         output.update(
             {
                 "input": text,
-                "sentiment": result[0]["label"],
-                "confidence": float(result[0]["score"]),
+                "sentiment": sentiment,
+                "confidence": confidence,
                 "status": "success",
             }
         )

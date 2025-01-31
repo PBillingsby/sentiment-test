@@ -14,7 +14,7 @@
             "Deal": { "Concurrency": 1 },
             "Docker": {
                 "WorkingDirectory": "/workspace",
-                "Entrypoint": ["python", "/workspace/src/run_inference.py"],
+                "Entrypoint": ["python", "/src/run_inference.py"],
                 "EnvironmentVariables": [
                     {{ if .input }}"INPUT={{ js .input }}"{{ else }}"INPUT=Default input for analysis",{{ end }}
                     {{ if .input }}"INPUT_TEXT={{ js .input }}"{{ else }}"INPUT_TEXT=Default input_text for analysis",{{ end }}

@@ -14,11 +14,11 @@
             "Deal": { "Concurrency": 1 },
             "Docker": {
                 "WorkingDirectory": "/workspace",
-                "Entrypoint": ["python", "/src/run_inference.py"],
+                "Entrypoint": ["python", "/workspace/src/run_inference.py"],
                 "EnvironmentVariables": [
                     "INPUT={{ js .input }}"
                 ],
-                "Image": "devlinrocha/lilypad-module-sentiment:latest"
+                "Image": "pbillingsby/sentiment-test:latest"
             },
             "Engine": "Docker",
             "Network": { "Type": "None" },

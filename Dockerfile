@@ -16,7 +16,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 RUN mkdir -p /outputs
 
 # Copy source code
-COPY src /src
+COPY run_inference.py .
 
 # Copy pre-downloaded models into the container
 COPY models /models
@@ -26,4 +26,4 @@ ENV HF_HOME=/models
 ENV TRANSFORMERS_OFFLINE=1
 
 # Set entrypoint
-ENTRYPOINT ["python", "/workspace/src/run_inference.py"]
+ENTRYPOINT ["python", "/workspace/run_inference.py"]
